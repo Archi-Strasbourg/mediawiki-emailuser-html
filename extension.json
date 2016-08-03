@@ -1,4 +1,5 @@
 {
+	"manifest_version": 1,
 	"name": "EmailuserHtml",
 	"author": "Pierre Rudloff",
 	"description": "Send an HTML email to an user",
