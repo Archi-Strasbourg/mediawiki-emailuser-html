@@ -28,8 +28,7 @@ class ApiEmailUserHtml extends \ApiEmailUser
         $text = rtrim($text) . "\n\n-- \n";
         $text .= $footer;
 
-        $html = $data['HTML'].'<br/><br/><hr/>';
-        $html .= $footer;
+        $html = $data['HTML'];
 
         $body = array(
             'text'=>$text,
