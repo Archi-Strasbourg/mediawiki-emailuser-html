@@ -12,60 +12,61 @@ class ApiEmailUserHtmlTest extends \PHPUnit_Framework_TestCase
         Mockery::mock('overload:ApiBase');
         Mockery::mock('overload:Status')
             ->shouldReceive('isGood')
-            ->andReturn(true);
+                ->andReturn(true);
         Mockery::mock('overload:UserMailer')
             ->shouldReceive('send')
-            ->andReturn(new \Status());
+                ->andReturn(new \Status());
         Mockery::mock('overload:Config')
             ->shouldReceive('get');
         Mockery::mock('overload:Hooks')
             ->shouldReceive('run')
-            ->andReturn(true);
+                ->andReturn(true);
         Mockery::mock('overload:Message')
             ->shouldReceive('text')
             ->shouldReceive('inContentLanguage')
-            ->andReturn(new \Message());
+                ->andReturn(new \Message());
         Mockery::mock('overload:IContextSource')
             ->shouldReceive('getConfig')
-            ->andReturn(new \Config())
+                ->andReturn(new \Config())
             ->shouldReceive('getUser')
             ->shouldReceive('msg')
-            ->andReturn(new \Message());
+                ->andReturn(new \Message());
         Mockery::mock('overload:ApiResult')
             ->shouldReceive('addValue');
         Mockery::mock('overload:ApiEmailUser')
             ->shouldReceive('extractRequestParams')
-            ->andReturn(
-                array(
-                    'target'=>'',
-                    'token'=>'',
-                    'text'=>'',
-                    'html'=>'',
-                    'subject'=>'',
-                    'ccme'=>''
+                ->andReturn(
+                    array(
+                        'target'=>'',
+                        'token'=>'',
+                        'text'=>'',
+                        'html'=>'',
+                        'subject'=>'',
+                        'ccme'=>''
+                    )
                 )
-            )
             ->shouldReceive('getUser')
             ->shouldReceive('getConfig')
             ->shouldReceive('getContext')
-            ->andReturn(new \IContextSource())
+                ->andReturn(new \IContextSource())
             ->shouldReceive('getResult')
-            ->andReturn(new \ApiResult())
+                ->andReturn(new \ApiResult())
             ->shouldReceive('getModuleName')
             ->shouldReceive('getAllowedParams')
             ->shouldReceive('getHelpUrls')
-            ->andReturn('https://www.mediawiki.org/wiki/API:Email');
+                ->andReturn('https://www.mediawiki.org/wiki/API:Email');
         Mockery::mock('overload:User')
             ->shouldReceive('getName');
         Mockery::mock('overload:SpecialEmailUser')
             ->shouldReceive('getTarget')
-            ->andReturn(new \User())
+                ->andReturn(new \User())
             ->shouldReceive('getPermissionsError');
         $mailAddressMock = Mockery::mock('overload:MailAddress');
         $mockAddress = new \MailAddress();
         $mockAddress->name = 'Foo';
-        $mailAddressMock->shouldReceive('newFromUser')
-            ->andReturn($mockAddress);
+        $mailAddressMock
+            ->shouldReceive('newFromUser')
+                ->andReturn($mockAddress);
 
         $this->api = new ApiEmailUserHtml();
     }
