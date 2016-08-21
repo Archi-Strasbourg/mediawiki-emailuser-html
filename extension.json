@@ -1,20 +1,20 @@
 {
-	"manifest_version": 1,
-	"name": "EmailuserHtml",
-	"author": "Pierre Rudloff",
-	"version": "0.1.0",
-	"description": "Send an HTML email to an user",
-	"url": "https://github.com/Archi-Strasbourg/mediawiki-emailuser-html",
-	"license-name": "GPL-3.0",
-	"APIModules": {
-		"emailuser-html": "ApiEmailUserHtml\\ApiEmailUserHtml"
-	},
-	"AutoloadClasses": {
-		"ApiEmailUserHtml\\ApiEmailUserHtml": "ApiEmailUserHtml.php"
-	},
-	"MessagesDirs": {
-		"EmailuserHtml": [
-			"i18n"
-		]
-	}
+  "manifest_version": 1,
+  "name": "EmailuserHtml",
+  "author": "Pierre Rudloff",
+  "version": "0.1.0",
+  "description": "Send an HTML email to an user",
+  "url": "https://github.com/Archi-Strasbourg/mediawiki-emailuser-html",
+  "license-name": "GPL-3.0",
+  "APIModules": {
+    "emailuser-html": "ApiEmailUserHtml\\ApiEmailUserHtml"
+  },
+  "AutoloadClasses": {
+    "ApiEmailUserHtml\\ApiEmailUserHtml": "ApiEmailUserHtml.php"
+  },
+  "MessagesDirs": {
+    "EmailuserHtml": [
+      "i18n"
+    ]
+  }
 }

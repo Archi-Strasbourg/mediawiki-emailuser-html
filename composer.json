@@ -1,12 +1,13 @@
 {
-	"name": "archi-strasbourg/emailuser-html",
-	"type": "mediawiki-extension",
-	"license": "GPL-3.0",
-	"description": "MediaWiki API to send an HTML email to an user",
-	"require": {
-		"pear/mail_mime": "~1.10.0"
-	},
-	"require-dev": {
-		"squizlabs/php_codesniffer": "~2.6.2"
-	}
+  "name": "archi-strasbourg/emailuser-html",
+  "type": "mediawiki-extension",
+  "license": "GPL-3.0",
+  "description": "MediaWiki API to send an HTML email to an user",
+  "require": {
+    "pear/mail_mime": "~1.10.0"
+  },
+  "require-dev": {
+    "squizlabs/php_codesniffer": "~2.6.2",
+    "phpunit/phpunit": "~5.5.2"
+  }
 }
