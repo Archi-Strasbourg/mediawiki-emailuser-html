@@ -71,6 +71,10 @@ class ApiEmailUserHtmlTest extends \PHPUnit_Framework_TestCase
         $this->api = new ApiEmailUserHtml();
     }
 
+    protected function tearDown() {
+        Mockery::close();
+    }
+
     public function testExecute()
     {
         $this->api->execute();
