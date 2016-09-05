@@ -4,6 +4,7 @@ namespace ApiEmailUserHtml\Test;
 
 use ApiEmailUserHtml\ApiEmailUserHtml;
 use Mockery;
+use phpmock\mockery\PHPMockery;
 
 class ApiEmailUserHtmlTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,7 +18,8 @@ class ApiEmailUserHtmlTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('send')
                 ->andReturn(new \Status());
         Mockery::mock('overload:Config')
-            ->shouldReceive('get');
+            ->shouldReceive('get')
+                ->andReturn('foo');
         Mockery::mock('overload:Hooks')
             ->shouldReceive('run')
                 ->andReturn(true);
@@ -25,6 +27,8 @@ class ApiEmailUserHtmlTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('text')
             ->shouldReceive('inContentLanguage')
                 ->andReturn(new \Message());
+        PHPMockery::mock('ApiEmailUserHtml', 'wfMessage')
+            ->andReturn(new \Message());
         Mockery::mock('overload:IContextSource')
             ->shouldReceive('getConfig')
                 ->andReturn(new \Config())
@@ -71,7 +75,8 @@ class ApiEmailUserHtmlTest extends \PHPUnit_Framework_TestCase
         $this->api = new ApiEmailUserHtml();
     }
 
-    protected function tearDown() {
+    protected function tearDown()
+    {
         Mockery::close();
     }
 
