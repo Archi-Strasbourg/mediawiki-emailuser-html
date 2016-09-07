@@ -40,14 +40,14 @@ class ApiEmailUserHtmlTest extends \PHPUnit_Framework_TestCase
         Mockery::mock('overload:ApiEmailUser')
             ->shouldReceive('extractRequestParams')
                 ->andReturn(
-                    array(
-                        'target'=>'',
-                        'token'=>'',
-                        'text'=>'',
-                        'html'=>'',
-                        'subject'=>'',
-                        'ccme'=>''
-                    )
+                    [
+                        'target'  => '',
+                        'token'   => '',
+                        'text'    => '',
+                        'html'    => '',
+                        'subject' => '',
+                        'ccme'    => '',
+                    ]
                 )
             ->shouldReceive('getUser')
             ->shouldReceive('getConfig')
@@ -88,10 +88,10 @@ class ApiEmailUserHtmlTest extends \PHPUnit_Framework_TestCase
     public function testGetHelpUrls()
     {
         $this->assertEquals(
-            array(
+            [
                 'https://www.mediawiki.org/wiki/API:Email',
-                'https://github.com/Archi-Strasbourg/mediawiki-emailuser-html'
-            ),
+                'https://github.com/Archi-Strasbourg/mediawiki-emailuser-html',
+            ],
             $this->api->getHelpUrls()
         );
     }
