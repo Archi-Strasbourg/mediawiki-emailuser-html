@@ -8,6 +8,8 @@ use phpmock\mockery\PHPMockery;
 
 class ApiEmailUserHtmlTest extends \PHPUnit_Framework_TestCase
 {
+    private $api;
+
     protected function setUp()
     {
         Mockery::mock('overload:ApiBase');
