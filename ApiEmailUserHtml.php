@@ -4,15 +4,13 @@ namespace ApiEmailUserHtml;
 
 class ApiEmailUserHtml extends \ApiEmailUser
 {
-
-
     private function submit(array $data, \IContextSource $context)
     {
         $config = $context->getConfig();
 
         $target = \SpecialEmailUser::getTarget($data['Target']);
         if (!$target instanceof \User) {
-            return $context->msg($target . 'text')->parseAsBlock();
+            return $context->msg($target.'text')->parseAsBlock();
         }
 
         $to = \MailAddress::newFromUser($target);
@@ -25,19 +23,18 @@ class ApiEmailUserHtml extends \ApiEmailUser
             $from->name,
             $to->name
         )->inContentLanguage()->text();
-        $text = rtrim($text) . "\n\n-- \n";
+        $text = rtrim($text)."\n\n-- \n";
         $text .= $footer;
 
-        $html = $data['HTML'].'<br/><br/><hr/>';
-        $html .= $footer;
+        $html = $data['HTML'];
 
-        $body = array(
-            'text'=>$text,
-            'html'=>$html
-        );
+        $body = [
+            'text' => $text,
+            'html' => $html,
+        ];
 
         $error = '';
-        if (!\Hooks::run('EmailUser', array( &$to, &$from, &$subject, &$text, &$error ))) {
+        if (!\Hooks::run('EmailUser', [&$to, &$from, &$subject, &$text, &$error])) {
             return $error;
         }
 
@@ -52,9 +49,9 @@ class ApiEmailUserHtml extends \ApiEmailUser
             $replyTo = null;
         }
 
-        $status = \UserMailer::send($to, $mailFrom, $subject, $body, array(
+        $status = \UserMailer::send($to, $mailFrom, $subject, $body, [
             'replyTo' => $replyTo,
-        ));
+        ]);
 
         if (!$status->isGood()) {
             return $status;
@@ -65,13 +62,13 @@ class ApiEmailUserHtml extends \ApiEmailUser
                     $subject
                 )->text();
 
-                \Hooks::run('EmailUserCC', array( &$from, &$from, &$cc_subject, &$text ));
+                \Hooks::run('EmailUserCC', [&$from, &$from, &$cc_subject, &$text]);
 
                 $ccStatus = UserMailer::send($from, $from, $cc_subject, $text);
                 $status->merge($ccStatus);
             }
 
-            \Hooks::run('EmailUserComplete', array( $to, $from, $subject, $text ));
+            \Hooks::run('EmailUserComplete', [$to, $from, $subject, $text]);
 
             return $status;
         }
@@ -82,8 +79,8 @@ class ApiEmailUserHtml extends \ApiEmailUser
         $params = $this->extractRequestParams();
 
         $targetUser = \SpecialEmailUser::getTarget($params['target']);
-        if (!( $targetUser instanceof \User )) {
-            $this->dieUsageMsg(array( $targetUser ));
+        if (!($targetUser instanceof \User)) {
+            $this->dieUsageMsg([$targetUser]);
         }
 
         $error = \SpecialEmailUser::getPermissionsError(
@@ -92,16 +89,16 @@ class ApiEmailUserHtml extends \ApiEmailUser
             $this->getConfig()
         );
         if ($error) {
-            $this->dieUsageMsg(array( $error ));
+            $this->dieUsageMsg([$error]);
         }
 
-        $data = array(
-            'Target' => $targetUser->getName(),
-            'Text' => $params['text'],
-            'HTML' => $params['html'],
+        $data = [
+            'Target'  => $targetUser->getName(),
+            'Text'    => $params['text'],
+            'HTML'    => $params['html'],
             'Subject' => $params['subject'],
-            'CCMe' => $params['ccme'],
-        );
+            'CCMe'    => $params['ccme'],
+        ];
         $retval = self::submit($data, $this->getContext());
 
         if ($retval instanceof \Status) {
@@ -113,30 +110,30 @@ class ApiEmailUserHtml extends \ApiEmailUser
         }
 
         if ($retval === true) {
-            $result = array( 'result' => 'Success' );
+            $result = ['result' => 'Success'];
         } else {
-            $result = array(
-                'result' => 'Failure',
-                'message' => $retval
-            );
+            $result = [
+                'result'  => 'Failure',
+                'message' => $retval,
+            ];
         }
 
         $this->getResult()->addValue(null, $this->getModuleName(), $result);
     }
 
-
     public function getAllowedParams()
     {
         $params = parent::getAllowedParams();
-        $params['html'] = array(
-            \ApiBase::PARAM_TYPE => 'text',
-            \ApiBase::PARAM_REQUIRED => true
-        );
+        $params['html'] = [
+            \ApiBase::PARAM_TYPE     => 'text',
+            \ApiBase::PARAM_REQUIRED => true,
+        ];
+
         return $params;
     }
 
     public function getHelpUrls()
     {
-        return array(parent::getHelpUrls(), 'https://github.com/Archi-Strasbourg/mediawiki-emailuser-html');
+        return [parent::getHelpUrls(), 'https://github.com/Archi-Strasbourg/mediawiki-emailuser-html'];
     }
 }

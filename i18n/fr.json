@@ -1,10 +1,9 @@
 {
-	"apihelp-emailuser-html-description": "Envoyer un courriel à un utilisateur.",
-	"apihelp-emailuser-html-param-target": "Utilisateur à qui envoyer le courriel.",
-	"apihelp-emailuser-html-param-subject": "Entête du sujet.",
-	"apihelp-emailuser-html-param-text": "Corps du courriel (texte).",
-	"apihelp-emailuser-html-param-ccme": "M’envoyer une copie de ce courriel.",
-	"apihelp-emailuser-html-example-email": "Envoyer un courriel à l’utilisateur <kbd>WikiSysop</kbd> avec le texte <kbd>Contenu</kbd>.",
-
-	"apihelp-emailuser-html-param-html": "Corps du courriel (HTML)."
+  "apihelp-emailuser-html-description": "Envoyer un courriel à un utilisateur.",
+  "apihelp-emailuser-html-param-target": "Utilisateur à qui envoyer le courriel.",
+  "apihelp-emailuser-html-param-subject": "Entête du sujet.",
+  "apihelp-emailuser-html-param-text": "Corps du courriel (texte).",
+  "apihelp-emailuser-html-param-ccme": "M’envoyer une copie de ce courriel.",
+  "apihelp-emailuser-html-example-email": "Envoyer un courriel à l’utilisateur <kbd>WikiSysop</kbd> avec le texte <kbd>Contenu</kbd>.",
+  "apihelp-emailuser-html-param-html": "Corps du courriel (HTML)."
 }
