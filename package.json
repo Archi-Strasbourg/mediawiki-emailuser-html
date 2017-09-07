@@ -1,7 +1,7 @@
 {
   "name": "mediawiki-emailuser-html",
   "description": "MediaWiki API to send an HTML email to an user",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "author": "Pierre Rudloff",
   "bugs": "https://github.com/Archi-Strasbourg/mediawiki-emailuser-html/issues",
   "devDependencies": {
