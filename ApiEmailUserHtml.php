@@ -2,19 +2,25 @@
 
 namespace ApiEmailUserHtml;
 
+use ApiUsageException;
+use Hooks;
+use MailAddress;
+use SpecialEmailUser;
+use UserMailer;
+
 class ApiEmailUserHtml extends \ApiEmailUser
 {
     private function submit(array $data, \IContextSource $context)
     {
         $config = $context->getConfig();
 
-        $target = \SpecialEmailUser::getTarget($data['Target']);
+        $target = SpecialEmailUser::getTarget($data['Target'], $this->getUser());
         if (!$target instanceof \User) {
             return $context->msg($target.'text')->parseAsBlock();
         }
 
-        $to = \MailAddress::newFromUser($target);
-        $from = \MailAddress::newFromUser($context->getUser());
+        $to = MailAddress::newFromUser($target);
+        $from = MailAddress::newFromUser($context->getUser());
         $subject = $data['Subject'];
         $text = $data['Text'];
 
@@ -34,12 +40,12 @@ class ApiEmailUserHtml extends \ApiEmailUser
         ];
 
         $error = '';
-        if (!\Hooks::run('EmailUser', [&$to, &$from, &$subject, &$text, &$error])) {
+        if (!Hooks::run('EmailUser', [&$to, &$from, &$subject, &$text, &$error])) {
             return $error;
         }
 
         if ($config->get('UserEmailUseReplyTo')) {
-            $mailFrom = new \MailAddress(
+            $mailFrom = new MailAddress(
                 $config->get('PasswordSender'),
                 wfMessage('emailsender')->inContentLanguage()->text()
             );
@@ -49,7 +55,7 @@ class ApiEmailUserHtml extends \ApiEmailUser
             $replyTo = null;
         }
 
-        $status = \UserMailer::send($to, $mailFrom, $subject, $body, [
+        $status = UserMailer::send($to, $mailFrom, $subject, $body, [
             'replyTo' => $replyTo,
         ]);
 
@@ -62,34 +68,37 @@ class ApiEmailUserHtml extends \ApiEmailUser
                     $subject
                 )->text();
 
-                \Hooks::run('EmailUserCC', [&$from, &$from, &$cc_subject, &$text]);
+                Hooks::run('EmailUserCC', [&$from, &$from, &$cc_subject, &$text]);
 
                 $ccStatus = UserMailer::send($from, $from, $cc_subject, $text);
                 $status->merge($ccStatus);
             }
 
-            \Hooks::run('EmailUserComplete', [$to, $from, $subject, $text]);
+            Hooks::run('EmailUserComplete', [$to, $from, $subject, $text]);
 
             return $status;
         }
     }
 
+    /**
+     * @throws ApiUsageException
+     */
     public function execute()
     {
         $params = $this->extractRequestParams();
 
-        $targetUser = \SpecialEmailUser::getTarget($params['target']);
+        $targetUser = SpecialEmailUser::getTarget($params['target'], $this->getUser());
         if (!($targetUser instanceof \User)) {
-            $this->dieUsageMsg([$targetUser]);
+            $this->dieWithError([$targetUser]);
         }
 
-        $error = \SpecialEmailUser::getPermissionsError(
+        $error = SpecialEmailUser::getPermissionsError(
             $this->getUser(),
             $params['token'],
             $this->getConfig()
         );
         if ($error) {
-            $this->dieUsageMsg([$error]);
+            $this->dieWithError([$error]);
         }
 
         $data = [
