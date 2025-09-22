@@ -3,14 +3,39 @@
 namespace ApiEmailUserHtml;
 
 use ApiUsageException;
-use Hooks;
 use MailAddress;
+use MediaWiki\Api\ApiEmailUser;
+use MediaWiki\Api\ApiMain;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Mail\EmailUserFactory;
+use MediaWiki\User\UserFactory;
 use SpecialEmailUser;
 use UserMailer;
+use Wikimedia\ParamValidator\ParamValidator;
 
-class ApiEmailUserHtml extends \ApiEmailUser
+class ApiEmailUserHtml extends ApiEmailUser
 {
-    private function submit(array $data, \IContextSource $context)
+
+    /**
+     * @param ApiMain $mainModule
+     * @param string $moduleName
+     * @param EmailUserFactory $emailUserFactory
+     * @param UserFactory $userFactory
+     * @param HookContainer $hookContainer
+     */
+    public function __construct(
+        ApiMain                           $mainModule,
+        string                            $moduleName,
+        private readonly EmailUserFactory $emailUserFactory,
+        UserFactory                       $userFactory,
+        private readonly HookContainer    $hookContainer
+    ) {
+        parent::__construct($mainModule, $moduleName, $emailUserFactory, $userFactory);
+    }
+
+    private function submit(array $data, IContextSource $context)
     {
         $config = $context->getConfig();
 
@@ -40,7 +65,7 @@ class ApiEmailUserHtml extends \ApiEmailUser
         ];
 
         $error = '';
-        if (!Hooks::run('EmailUser', [&$to, &$from, &$subject, &$text, &$error])) {
+        if (!$this->hookContainer->run('EmailUser', [&$to, &$from, &$subject, &$text, &$error])) {
             return $error;
         }
 
@@ -59,46 +84,40 @@ class ApiEmailUserHtml extends \ApiEmailUser
             'replyTo' => $replyTo,
         ]);
 
-        if (!$status->isGood()) {
-            return $status;
-        } else {
+        if ($status->isGood()) {
             if ($data['CCMe'] && $to != $from) {
                 $cc_subject = $context->msg('emailccsubject')->rawParams(
                     $target->getName(),
                     $subject
                 )->text();
 
-                Hooks::run('EmailUserCC', [&$from, &$from, &$cc_subject, &$text]);
+                $this->hookContainer->run('EmailUserCC', [&$from, &$from, &$cc_subject, &$text]);
 
                 $ccStatus = UserMailer::send($from, $from, $cc_subject, $text);
                 $status->merge($ccStatus);
             }
 
-            Hooks::run('EmailUserComplete', [$to, $from, $subject, $text]);
+            $this->hookContainer->run('EmailUserComplete', [$to, $from, $subject, $text]);
 
-            return $status;
         }
+        return $status;
     }
 
     /**
      * @throws ApiUsageException
      */
-    public function execute()
-    {
+    public function execute(): void {
         $params = $this->extractRequestParams();
+        $emailUser = $this->emailUserFactory->newEmailUser( RequestContext::getMain()->getAuthority() );
 
         $targetUser = SpecialEmailUser::getTarget($params['target'], $this->getUser());
         if (!($targetUser instanceof \User)) {
             $this->dieWithError([$targetUser]);
         }
 
-        $error = SpecialEmailUser::getPermissionsError(
-            $this->getUser(),
-            $params['token'],
-            $this->getConfig()
-        );
-        if ($error) {
-            $this->dieWithError([$error]);
+        $error = $emailUser->canSend();
+        if (!$error->isGood()) {
+            $this->dieStatus( $error );
         }
 
         $data = [
@@ -130,19 +149,17 @@ class ApiEmailUserHtml extends \ApiEmailUser
         $this->getResult()->addValue(null, $this->getModuleName(), $result);
     }
 
-    public function getAllowedParams()
-    {
+    public function getAllowedParams(): array {
         $params = parent::getAllowedParams();
         $params['html'] = [
-            \ApiBase::PARAM_TYPE     => 'text',
-            \ApiBase::PARAM_REQUIRED => true,
+            ParamValidator::PARAM_TYPE     => 'text',
+            ParamValidator::PARAM_REQUIRED => true,
         ];
 
         return $params;
     }
 
-    public function getHelpUrls()
-    {
+    public function getHelpUrls(): array {
         return [parent::getHelpUrls(), 'https://github.com/Archi-Strasbourg/mediawiki-emailuser-html'];
     }
 }

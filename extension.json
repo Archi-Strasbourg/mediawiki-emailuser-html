@@ -7,7 +7,10 @@
   "url": "https://github.com/Archi-Strasbourg/mediawiki-emailuser-html",
   "license-name": "GPL-3.0",
   "APIModules": {
-    "emailuser-html": "ApiEmailUserHtml\\ApiEmailUserHtml"
+    "emailuser-html": {
+      "class": "ApiEmailUserHtml\\ApiEmailUserHtml",
+      "services": ["EmailUserFactory", "UserFactory", "HookContainer"]
+    }
   },
   "AutoloadClasses": {
     "ApiEmailUserHtml\\ApiEmailUserHtml": "ApiEmailUserHtml.php"
